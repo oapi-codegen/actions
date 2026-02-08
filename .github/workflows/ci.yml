@@ -1,6 +1,12 @@
 name: CI
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      excluding_versions:
+        description: 'List of Go versions to not run against, in a JSON array (e.g. ["1.21", "1.22"])'
+        required: false
+        type: string
+        default: "[]"
 
 jobs:
   setup:
@@ -12,7 +18,13 @@ jobs:
       - id: versions
         run: |
           # versions of Go that this module can still be built with (and therefore are "supported" by this project) and actively supported versions of Go
-          echo 'matrix=["1.20", "1.21", "1.22", "1.23", "1.24", "1.25", "stable", "oldstable"]' >> $GITHUB_OUTPUT
+          all_versions='["1.20", "1.21", "1.22", "1.23", "1.24", "1.25", "stable", "oldstable"]'
+          excluding='${{ inputs.excluding_versions }}'
+
+          # Filter out excluded versions using jq
+          filtered=$(jq -c --argjson exclude "$excluding" '[.[] | select(. as $v | $exclude | index($v) | not)]' <<< "$all_versions")
+
+          echo "matrix=$filtered" >> $GITHUB_OUTPUT
 
   build:
     name: Build
