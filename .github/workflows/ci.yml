@@ -46,6 +46,9 @@ jobs:
 
       - name: Test
         run: make test
+        env:
+          # A combination of our GitHub Actions setup, with the Go toolchain, leads to inconsistencies in calling `go env`, in particular with Go 1.21, where having (the default) `GOTOOLCHAIN=auto` results in build failures
+          GOTOOLCHAIN: local
 
   lint:
     name: Lint
@@ -66,6 +69,9 @@ jobs:
 
       - name: Run `make lint-ci`
         run: make lint-ci
+        env:
+          # A combination of our GitHub Actions setup, with the Go toolchain, leads to inconsistencies in calling `go env`, in particular with Go 1.21, where having (the default) `GOTOOLCHAIN=auto` results in build failures
+          GOTOOLCHAIN: local
 
   tidy:
     name: Go mod tidy
@@ -109,6 +115,9 @@ jobs:
 
       - name: Run `make generate`
         run: make generate
+        env:
+          # A combination of our GitHub Actions setup, with the Go toolchain, leads to inconsistencies in calling `go env`, in particular with Go 1.21, where having (the default) `GOTOOLCHAIN=auto` results in build failures
+          GOTOOLCHAIN: local
 
       - name: Check for no untracked files
         run: git status && git diff-index --quiet HEAD --
@@ -117,10 +126,10 @@ jobs:
     name: CI
     runs-on: ubuntu-latest
     needs:
-    - build
-    - lint
-    - tidy
-    - generate
+      - build
+      - lint
+      - tidy
+      - generate
     if: always()
     steps:
       - name: Check all jobs status
