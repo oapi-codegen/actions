@@ -7,6 +7,11 @@ on:
         required: false
         type: string
         default: "[]"
+      lint_versions:
+        description: 'List of Go versions to lint against, in a JSON array (e.g. ["1.25"]). If empty, uses the same versions as the other jobs.'
+        required: false
+        type: string
+        default: ""
 
 jobs:
   setup:
@@ -14,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       go-versions: ${{ steps.versions.outputs.matrix }}
+      lint-versions: ${{ steps.versions.outputs.lint_matrix }}
     steps:
       - id: versions
         run: |
@@ -25,6 +31,14 @@ jobs:
           filtered=$(jq -c --argjson exclude "$excluding" '[.[] | select(. as $v | $exclude | index($v) | not)]' <<< "$all_versions")
 
           echo "matrix=$filtered" >> $GITHUB_OUTPUT
+
+          # Use lint-specific versions if provided, otherwise fall back to the filtered matrix
+          lint_override='${{ inputs.lint_versions }}'
+          if [ -n "$lint_override" ]; then
+            echo "lint_matrix=$lint_override" >> $GITHUB_OUTPUT
+          else
+            echo "lint_matrix=$filtered" >> $GITHUB_OUTPUT
+          fi
 
   build:
     name: Build
@@ -57,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ${{ fromJSON(needs.setup.outputs.go-versions) }}
+        version: ${{ fromJSON(needs.setup.outputs.lint-versions) }}
     steps:
       - name: Check out source code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
