@@ -24,7 +24,7 @@ jobs:
       - id: versions
         run: |
           # versions of Go that this module can still be built with (and therefore are "supported" by this project) and actively supported versions of Go
-          all_versions='["1.22", "1.23", "1.24", "1.25", "stable", "oldstable"]'
+          all_versions='["1.24", "1.25", "1.26"]'
           excluding='${{ inputs.excluding_versions }}'
 
           # Filter out excluded versions using jq
