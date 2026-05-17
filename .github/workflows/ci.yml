@@ -107,8 +107,8 @@ jobs:
       - name: Install `tidied`
         run: go install gitlab.com/jamietanna/tidied@latest
 
-      - name: Check for no untracked files
-        run: tidied -verbose
+      - name: Run `make tidy-ci`
+        run: make tidy-ci
 
   generate:
     name: Generated files
