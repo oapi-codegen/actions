@@ -134,7 +134,7 @@ jobs:
           GOTOOLCHAIN: local
 
       - name: Check for no untracked files
-        run: git status && git diff-index --quiet HEAD --
+        run: git status && git diff --patch --exit-code HEAD --
 
   check:
     name: CI
