@@ -104,9 +104,6 @@ jobs:
         with:
           go-version: ${{ matrix.version }}
 
-      - name: Install `tidied`
-        run: go install gitlab.com/jamietanna/tidied@latest
-
       - name: Run `make tidy-ci`
         run: make tidy-ci
 
