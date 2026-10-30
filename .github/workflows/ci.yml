@@ -3,12 +3,12 @@ on:
   workflow_call:
     inputs:
       excluding_versions:
-        description: 'List of Go versions to not run against, in a JSON array (e.g. ["1.21", "1.22"])'
+        description: 'List of Go versions to not run against, in a JSON array (e.g. ["1.26"])'
         required: false
         type: string
         default: "[]"
       lint_versions:
-        description: 'List of Go versions to lint against, in a JSON array (e.g. ["1.25"]). If empty, uses the same versions as the other jobs.'
+        description: 'List of Go versions to lint against, in a JSON array (e.g. ["1.27"]). If empty, uses the same versions as the other jobs.'
         required: false
         type: string
         default: ""
@@ -24,7 +24,7 @@ jobs:
       - id: versions
         run: |
           # versions of Go that this module can still be built with (and therefore are "supported" by this project) and actively supported versions of Go
-          all_versions='["1.25", "1.26", "1.27"]'
+          all_versions='["1.26", "1.27"]'
           excluding='${{ inputs.excluding_versions }}'
 
           # Filter out excluded versions using jq
